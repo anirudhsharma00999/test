@@ -138,9 +138,7 @@ export class NLPAnalyzer {
       const sentimentResult = analyze(text);
       
       // Use Hugging Face for text classification
-      const classificationResult = await hf.textClassification({
-      }
-      )
+      let classificationResult;
       if (hf) {
         try {
           classificationResult = await hf.textClassification({
