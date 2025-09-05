@@ -149,7 +149,7 @@ export class NLPAnalyzer {
   }> {
     try {
       // Sentiment analysis
-      const sentimentResult = analyze(text);
+      const sentimentResult = sentiment.analyze(text);
       
       // Use Hugging Face for text classification
       let classificationResult;
