@@ -89,7 +89,7 @@ export class ModelLoader {
     model.compile({
       optimizer: tf.train.adam(0.001),
       loss: 'binaryCrossentropy',
-      metrics: ['accuracy', 'precision', 'recall']
+      metrics: ['accuracy', 'precision']
     });
 
     return model;
