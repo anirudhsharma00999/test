@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { HfInference } from '@huggingface/inference';
 import OpenAI from 'openai';
+import { WordTokenizer, PorterStemmer } from 'natural';
 
 // Initialize AI services
 const hf = import.meta.env.VITE_HUGGINGFACE_API_KEY ? 
