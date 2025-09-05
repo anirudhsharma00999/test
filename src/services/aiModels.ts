@@ -1,7 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { HfInference } from '@huggingface/inference';
 import OpenAI from 'openai';
-import { WordTokenizer, PorterStemmer } from 'natural';
 
 // Initialize AI services
 const hf = import.meta.env.VITE_HUGGINGFACE_API_KEY ? 
@@ -35,10 +34,8 @@ export interface AIAnalysisResult {
 // Phishing detection model using TensorFlow.js
 class PhishingDetectionModel {
   private model: tf.LayersModel | null = null;
-  private tokenizer: WordTokenizer;
 
   constructor() {
-    this.tokenizer = new WordTokenizer();
     this.loadModel();
   }
 
@@ -87,7 +84,7 @@ class PhishingDetectionModel {
 
   private extractFeatures(content: string): number[] {
     const features = new Array(100).fill(0);
-    const tokens = this.tokenizer.tokenize(content.toLowerCase());
+    const tokens = this.tokenize(content.toLowerCase());
     
     // Suspicious keywords with weights
     const suspiciousKeywords = {
@@ -104,7 +101,7 @@ class PhishingDetectionModel {
     let brandMentions = 0;
 
     tokens?.forEach(token => {
-      const stemmed = PorterStemmer.stem(token);
+      const stemmed = this.simpleStem(token);
       if (suspiciousKeywords[token] || suspiciousKeywords[stemmed]) {
         suspiciousScore += suspiciousKeywords[token] || suspiciousKeywords[stemmed];
       }
@@ -124,6 +121,22 @@ class PhishingDetectionModel {
     features[4] = (content.match(/https?:\/\//g) || []).length / 10; // URL count
     
     return features;
+  }
+
+  private tokenize(text: string): string[] {
+    // Simple tokenization by splitting on non-word characters
+    return text.toLowerCase().match(/\b\w+\b/g) || [];
+  }
+
+  private simpleStem(word: string): string {
+    // Simple stemming - remove common suffixes
+    const suffixes = ['ing', 'ed', 'er', 'est', 'ly', 's'];
+    for (const suffix of suffixes) {
+      if (word.endsWith(suffix) && word.length > suffix.length + 2) {
+        return word.slice(0, -suffix.length);
+      }
+    }
+    return word;
   }
 }
 
